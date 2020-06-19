@@ -1,15 +1,50 @@
+import 'dart:convert';
+
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 // import 'main.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../main.dart';
 import 'camera_screen.dart';
+import 'package:http/http.dart' as http;
 // import 'package:shared_preferences/shared_preferences.dart';
 
 import 'resident_list_screen.dart';
 import 'vehicle_screen.dart';
 import 'login_screen.dart';
 import 'alarms_screen.dart';
+
+// Future<NumVehicle> getData() async {
+//   final response =
+//       await http.get('http://lrgs.ftsm.ukm.my/users/a159159/report_daily.php');
+
+//   if (response.statusCode == 200) {
+//     // If the server did return a 200 OK response,
+//     // then parse the JSON.
+//     return NumVehicle.fromJson(json.decode(response.body));
+//   } else {
+//     // If the server did not return a 200 OK response,
+//     // then throw an exception.
+//     throw Exception('Failed to load album');
+//   }
+// }
+
+// class NumVehicle {
+//   final String type;
+//   final String flow;
+//   final int total;
+
+//   NumVehicle({this.type, this.flow, this.total});
+
+//   factory NumVehicle.fromJson(Map<String, dynamic> json) {
+//     return NumVehicle(
+//       type: json['vehicleType'],
+//       flow: json['vehicleFlow'],
+//       total: json['Total']
+//     );
+//   }
+// }
+String carin, carout, motorin, motorout;
 
 class MainScreen extends StatefulWidget {
   MainScreen({this.username});
@@ -19,6 +54,14 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MyMainScreenState extends State<MainScreen> {
+  List<dynamic> numvehicle = List();
+
+  Future<List> getData() async {
+    final response = await http
+        .get('http://lrgs.ftsm.ukm.my/users/a159159/report_daily.php');
+    return json.decode(response.body);
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -45,19 +88,75 @@ class _MyMainScreenState extends State<MainScreen> {
             children: <Widget>[
               Padding(
                 padding: EdgeInsets.only(
-                  top: 70,
-                  bottom: 10,
+                  top: 50,
+                  bottom: 30,
                 ),
                 child: Center(
-                  child: Text(
-                    'EzCam v3.0',
-                    style: GoogleFonts.roboto(
-                      fontSize: 60,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
+                    child: Image(image: AssetImage('assets/images/logo.png'))),
+              ),
+              FutureBuilder(
+                future: getData(),
+                builder: (context, snapshot) {
+                  return snapshot.hasData
+                      ? new ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: snapshot.data.length,
+                          itemBuilder: (context, i) {
+                            numvehicle = snapshot.data;
+                            if (numvehicle[i]['vehicleType'] == "CAR" &&
+                                numvehicle[i]['vehicleFlow'] == "IN") {
+                              carin = numvehicle[i]['Total'];
+                            }
+                            if (numvehicle[i]['vehicleType'] == "CAR" &&
+                                numvehicle[i]['vehicleFlow'] == "OUT") {
+                              carout = numvehicle[i]['Total'];
+                            }
+                            if (numvehicle[i]['vehicleType'] == "MOTOR" &&
+                                numvehicle[i]['vehicleFlow'] == "IN") {
+                              motorin = numvehicle[i]['Total'];
+                            }
+                            if (numvehicle[i]['vehicleType'] == "MOTOR" &&
+                                numvehicle[i]['vehicleFlow'] == "OUT") {
+                              motorout = numvehicle[i]['Total'];
+                            }
+                            return new Divider(
+                              height: 10.0,
+                              thickness: 10.0,
+                            );
+                          },
+                        )
+                      : new Center(child: new CircularProgressIndicator());
+                },
+              ),
+              Padding(
+                padding: EdgeInsets.only(left: 100),
+                child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Row(
+                    children: <Widget>[
+                      Text("Car In: " + carin ?? '0', textAlign: TextAlign.center,
+                          style: GoogleFonts.montserrat(color: Colors.white)),
+                      Icon(Icons.directions_car, color: Colors.white),
+                      SizedBox(width: 20),
+                      Text("Car Out: " + carout ?? '0',
+                          style: GoogleFonts.montserrat(color: Colors.white)),
+                      Icon(Icons.directions_transit, color: Colors.white),
+                    ],
                   ),
-                ),
+                  Row(
+                    children: <Widget>[
+                      Text("Motor In: " + motorin ?? '0',
+                          style: GoogleFonts.montserrat(color: Colors.white)),
+                      Icon(Icons.directions_car, color: Colors.white),
+                      SizedBox(width: 20),
+                      Text(motorout ?? '0',
+                          style: GoogleFonts.montserrat(color: Colors.white)),
+                      Icon(Icons.directions_transit, color: Colors.white),
+                    ],
+                  ),
+                ],
+              ),
               ),
               Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -66,7 +165,7 @@ class _MyMainScreenState extends State<MainScreen> {
                     margin: EdgeInsets.only(
                       top: 50,
                     ),
-                    height: 180,
+                    height: 80,
                     width: double.maxFinite,
                     child: Card(
                       child: RaisedButton.icon(
@@ -86,9 +185,9 @@ class _MyMainScreenState extends State<MainScreen> {
                   ),
                   Container(
                     padding: EdgeInsets.only(
-                      top: 10,
+                      top: 5,
                     ),
-                    height: 180,
+                    height: 80,
                     width: double.maxFinite,
                     child: Card(
                       child: RaisedButton.icon(
@@ -108,9 +207,9 @@ class _MyMainScreenState extends State<MainScreen> {
                   ),
                   Container(
                     padding: EdgeInsets.only(
-                      top: 10,
+                      top: 5,
                     ),
-                    height: 180,
+                    height: 80,
                     width: double.maxFinite,
                     child: Card(
                       child: RaisedButton.icon(
@@ -130,9 +229,9 @@ class _MyMainScreenState extends State<MainScreen> {
                   ),
                   Container(
                     padding: EdgeInsets.only(
-                      top: 10,
+                      top: 5,
                     ),
-                    height: 180,
+                    height: 80,
                     width: double.maxFinite,
                     child: Card(
                       child: RaisedButton.icon(

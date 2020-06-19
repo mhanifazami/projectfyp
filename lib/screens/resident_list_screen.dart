@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-// import 'dart:convert';
-// import 'dart:async';
-// import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'dart:async';
+import 'package:http/http.dart' as http;
 import 'package:google_fonts/google_fonts.dart';
 import 'package:dio/dio.dart';
 // import 'vehicle_details_screen.dart';
@@ -199,15 +199,11 @@ class ResidentScreenState extends State<ResidentScreen> {
                                 houseno = residents[i]['HouseNo'];
                                 contactno = residents[i]['ContactNo'];
 
-                                print(name);
-                                print(houseno);
-                                print(brand);
-
 
                                 Navigator.of(context)
                                     .pushNamed('/ResidentDetailScreen');
-                                Navigator.pushReplacementNamed(
-                                    context, '/ResidentDetailScreen');
+                                // Navigator.pushReplacementNamed(
+                                //     context, '/ResidentDetailScreen');
                                 Navigator.pop(context);
                               },
                               child: new Card(
@@ -262,7 +258,6 @@ class ResidentScreenState extends State<ResidentScreen> {
             brand: brand,
             type: type,
             regisdate: regisdate,
-            pic: pic,
             name: name,
             roadno: roadno,
             houseno: houseno,

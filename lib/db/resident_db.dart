@@ -42,6 +42,17 @@ class Resident {
 
     return json.decode(response.body);
   }
+  
+  // static Future<List> getVehicles() async {
+    
+  //   var map = Map<String, dynamic>();
+
+  //   map['action'] = "GET_VEHICLE";
+  //   map['residentid'] = residentid;
+  //   final response = await http.post("http://lrgs.ftsm.ukm.my/users/a159159/getResident.php", body: map);
+
+  //   return json.decode(response.body);
+  // }
 
   static Future<List> addData(
       String name, String roadno, String houseno, String contactno) async {

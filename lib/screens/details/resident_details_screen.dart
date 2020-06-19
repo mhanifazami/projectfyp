@@ -1,23 +1,25 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../db/resident_db.dart';
+import 'dart:async';
+import 'package:http/http.dart' as http;
 
 class ResidentDetails extends StatelessWidget {
-  final String residentid, vid, brand, type, regisdate, pic, name, roadno, houseno, contactno;
+  final String residentid, name, roadno, houseno, contactno, vid, brand, type, regisdate;
 
   ResidentDetails(
       {Key key,
       this.residentid,
-      this.vid,
-      this.brand,
-      this.type,
-      this.regisdate,
-      this.pic,
       this.name,
       this.roadno,
       this.houseno,
-      this.contactno})
+      this.contactno,
+      this.vid,
+      this.brand,
+      this.type,
+      this.regisdate})
       : super(key: key);
-
 
   @override
   Widget build(BuildContext context) {
@@ -26,47 +28,6 @@ class ResidentDetails extends StatelessWidget {
         backgroundColor: Color(0xff21254A),
         body: Column(
           children: <Widget>[
-            // Center(
-            //   child: Container(
-            //     height: 300,
-            //     width: MediaQuery.of(context).size.width,
-            //     decoration: BoxDecoration(
-            //       color: Colors.purple,
-            //       image: new DecorationImage(
-            //         fit: BoxFit.cover,
-            //         colorFilter: ColorFilter.mode(
-            //             Colors.black.withOpacity(0.1), BlendMode.dstATop),
-            //         image: new NetworkImage(
-            //           'http://lrgs.ftsm.ukm.my/users/a159159/' + pic,
-            //         ),
-            //       ),
-            //     ),
-            //     child: Column(children: <Widget>[
-            //       SizedBox(
-            //         height: 40,
-            //       ),
-            //       CircleAvatar(
-            //           backgroundImage: NetworkImage(
-            //             'http://lrgs.ftsm.ukm.my/users/a159159/' + pic,
-            //           ),
-            //           radius: 70.0),
-            //       SizedBox(
-            //         height: 20,
-            //       ),
-            //       Text(brand + " (" + type + ")",
-            //           style: GoogleFonts.montserrat(
-            //               fontSize: 20,
-            //               fontWeight: FontWeight.bold,
-            //               color: Colors.white)),
-            //       SizedBox(
-            //         height: 10,
-            //       ),
-            //       Text(vid,
-            //           style: GoogleFonts.montserrat(
-            //               fontSize: 15, color: Colors.white)),
-            //     ]),
-            //   ),
-            // ),
             SizedBox(height: 20),
             Align(
               alignment: Alignment(-0.85, 0.2),
@@ -77,9 +38,9 @@ class ResidentDetails extends StatelessWidget {
             ),
             SizedBox(height: 15),
             Align(
-              alignment: Alignment(-0.6, 0.2),
+              alignment: Alignment(-0.55, 0.2),
               child: Text(
-                        name,
+                        "Name : " + name,
                         style: GoogleFonts.montserrat(fontSize: 16, color: Colors.white)
               ),
             ),
@@ -112,36 +73,30 @@ class ResidentDetails extends StatelessWidget {
                         style: GoogleFonts.montserrat(fontSize: 18, color: Colors.white, fontWeight: FontWeight.bold)
               ),
             ),
-            SizedBox(height: 20),
+            SizedBox(height: 15),
             Align(
-              alignment: Alignment(-0.78, 0.2),
-              child: Text(
-                        "Number Plate : " + vid??"not specified",
-                        style: GoogleFonts.montserrat(fontSize: 16, color: Colors.white)
-              ),
-            ),
-            Align(
-              alignment: Alignment(-0.83, 0.2),
+              alignment: Alignment(-0.82, 0.2),
               child: Text(
                         "Brand : " + brand??"not specified",
                         style: GoogleFonts.montserrat(fontSize: 16, color: Colors.white)
               ),
             ),
             Align(
-              alignment: Alignment(-0.87, 0.2),
+              alignment: Alignment(-0.81, 0.2),
               child: Text(
-                        "Class : " + type??"not specified",
+                        "Number Plate : " + vid??"not specified",
                         style: GoogleFonts.montserrat(fontSize: 16, color: Colors.white)
               ),
             ),
             Align(
-              alignment: Alignment(-0.76, 0.2),
+              alignment: Alignment(-0.77, 0.2),
               child: Text(
                         "Registration Date : " + regisdate??"not specified",
                         style: GoogleFonts.montserrat(fontSize: 16, color: Colors.white)
               ),
             ),
           ],
-        ));
+        )
+    );
   }
 }
