@@ -129,7 +129,7 @@ class _MyMainScreenState extends State<MainScreen> {
                 },
               ),
               Padding(
-                padding: EdgeInsets.only(left: 100),
+                padding: EdgeInsets.only(left: 120),
                 child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
