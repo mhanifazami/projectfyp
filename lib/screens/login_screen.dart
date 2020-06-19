@@ -59,7 +59,7 @@ class _LoginScreenState extends State<MyLoginScreen> {
       }
 
       Fluttertoast.showToast(
-        msg: "Welcome",
+        msg: "Welcomo",
         textColor: Colors.white,
         toastLength: Toast.LENGTH_SHORT,
         timeInSecForIosWeb: 1,
