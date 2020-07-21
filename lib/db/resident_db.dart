@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:async';
 import 'package:http/http.dart' as http;
-import 'residents.dart';
 
 class Resident {
   static const ROOT = "http://lrgs.ftsm.ukm.my/users/a159159/getResident.php";
@@ -11,27 +10,7 @@ class Resident {
   static const UPDATE_RESIDENT_ACTION = 'UPDATE_RESIDENT';
   static const DELETE_RESIDENT_ACTION = 'DELETE_RESIDENT';
 
-  // static Future<List<Residents>> getResidents() async{
-  //   var map = Map<String, dynamic>();
-
-  //   map['action'] = VIEW_RESIDENT_ACTION;
-  //   final response = await http.post(ROOT, body: map);
-
-  //   if(response.statusCode == 200){
-  //     List<Residents> list = parseResidents(response.body);
-  //     return list;
-  //   } else{
-  //     throw Exception("Error");
-  //   }
-  // }
-
-  // static List<Residents> parseResidents(String responseBody){
-  //   final parsed = json.decode(responseBody).cast<Map<String, dynamic>>();
-  //   return parsed.map<Residents>((json) => Residents.fromJson(json)).toList();
-  // }
-
   static Future<List> viewData() async {
-    
     var map = Map<String, dynamic>();
 
     map['action'] = VIEW_RESIDENT_ACTION;
@@ -42,20 +21,9 @@ class Resident {
 
     return json.decode(response.body);
   }
-  
-  // static Future<List> getVehicles() async {
-    
-  //   var map = Map<String, dynamic>();
 
-  //   map['action'] = "GET_VEHICLE";
-  //   map['residentid'] = residentid;
-  //   final response = await http.post("http://lrgs.ftsm.ukm.my/users/a159159/getResident.php", body: map);
-
-  //   return json.decode(response.body);
-  // }
-
-  static Future<List> addData(
-      String name, String roadno, String houseno, String contactno) async {
+  static Future<List> addData(String name, String roadno, String houseno,
+      String contactno, String count) async {
     var map = Map<String, dynamic>();
 
     // String residentid = "Surada215";
@@ -65,6 +33,7 @@ class Resident {
     map['roadno'] = roadno;
     map['houseno'] = houseno;
     map['contactno'] = contactno;
+    map['count'] = count;
 
     final response = await http.post(ROOT, body: map);
     return json.decode(response.body);
@@ -90,7 +59,7 @@ class Resident {
     var map = Map<String, dynamic>();
 
     map['action'] = DELETE_RESIDENT_ACTION;
-    map['Residentid'] = rid;
+    map['residentid'] = rid;
 
     final response = await http.post(ROOT, body: map);
 

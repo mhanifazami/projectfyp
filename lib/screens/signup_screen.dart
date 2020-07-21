@@ -2,111 +2,30 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'dart:convert';
-import 'dart:async';
-import 'package:http/http.dart' as http;
 import '../animation/FadeAnimation.dart';
 
 import 'login_screen.dart';
-import '../db/user_db.dart';
 import '../db/resident_db.dart';
+import '../db/user_db.dart';
 
-class SignupScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return new MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: new MySignupScreen(),
-    );
-  }
-}
-
-class MySignupScreen extends StatefulWidget {
+class SignupScreen extends StatefulWidget {
   @override
   _SignupScreenState createState() => _SignupScreenState();
 }
 
-class _SignupScreenState extends State<MySignupScreen> {
+class _SignupScreenState extends State<SignupScreen> {
   TextEditingController usernameController = new TextEditingController();
   TextEditingController passwordController = new TextEditingController();
   TextEditingController nameController = new TextEditingController();
   TextEditingController emailController = new TextEditingController();
   TextEditingController addressController = new TextEditingController();
-  TextEditingController levelController = new TextEditingController();
 
-  // TextEditingController residController = new TextEditingController();
-  TextEditingController contactnoController = new TextEditingController();
-  TextEditingController roadnoController = new TextEditingController();
-  TextEditingController housenoController = new TextEditingController();
-
-  TextEditingController action = new TextEditingController();
-
-  // Repository().placeAddApiProvider(int.parse(roadnoController.text))
-  // var roadno = int.parse(roadnoController.text);
-
-  int selectedRadio = 0;
-  String level = '';
   String result = '';
-  // String lastid = '';
 
-  // Future<List> getLastId() async{
-    
-  //   var map = Map<String, dynamic>();
-
-  //   final response = await http.post('http://lrgs.ftsm.ukm.my/users/a159159/lastresidentid.php', body: map);
-    
-  //   return jsonDecode(response.body);
-  //   // print(data.toString());
-  // }
-
-  // addId(getLastId()){
-  //   String residentid = getLastId();
-
-  //   String subresidentid = residentid.substring(6);
-  //   int intresidentid = int.parse(subresidentid);
-  //   intresidentid = intresidentid + 1;
-  //   // String strresidentid = intresidentid.toString();
-
-  //   // String newresidentid = "Surada" + strresidentid;
-
-  //   lastid = residentid;
-  // }
-
-  @override
-  void initState() {
-    super.initState();
-    selectedRadio = 0;
-  }
-
-  setSelectedRadio(int val) {
-    setState(() {
-      selectedRadio = val;
-
-      if (selectedRadio == 1) {
-        level = 'user';
-        levelController.text = level;
-      } else if (selectedRadio == 2) {
-        level = 'admin';
-        levelController.text = level;
-      }
-    });
-  }
 
   addUser() {
-    // int roadnum = int.parse(roadnoController.text);
-    Resident.addData(nameController.text, roadnoController.text, housenoController.text,
-            contactnoController.text)
-        .then((result) {});
+    User.addData(nameController.text, addressController.text, usernameController.text, passwordController.text, emailController.text);
   }
-
-  // checkEmptyFields() {
-  //   if (nameController.text.isEmpty || addressController.text.isEmpty || usernameController.text.isEmpty ||
-  //       passwordController.text.isEmpty || emailController.text.isEmpty || levelController.text.isEmpty ||
-  //       contactnoController.text.isEmpty || roadnoController.text.isEmpty || housenoController.text.isEmpty) {
-  //     print('Empty Fields');
-  //     return;
-  //   }
-  // }
 
   msgToast() {
     Fluttertoast.showToast(
@@ -131,10 +50,6 @@ class _SignupScreenState extends State<MySignupScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xffd8d8d8),
-      // appBar: AppBar(
-      //   backgroundColor: Colors.purple,
-      //   title: Text('Sign Up'),
-      // ),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -302,29 +217,8 @@ class _SignupScreenState extends State<MySignupScreen> {
                           Container(
                             padding: EdgeInsets.all(10.0),
                             child: TextField(
-                                controller: contactnoController,
-                                // textAlign: TextAlign.center,
-                                style: new TextStyle(
-                                  color: Colors.black,
-                                ),
-                                decoration: InputDecoration(
-                                  prefixIcon:
-                                      Icon(Icons.person, color: Colors.grey),
-                                  border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.all(
-                                          Radius.circular(10.0)),
-                                      borderSide:
-                                          BorderSide(color: Colors.green)),
-                                  filled: true,
-                                  fillColor: Colors.white,
-                                  hintText: "Contact Number",
-                                  hintStyle: TextStyle(color: Colors.grey),
-                                )),
-                          ),
-                          Container(
-                            padding: EdgeInsets.all(10.0),
-                            child: TextField(
                                 controller: emailController,
+                                keyboardType: TextInputType.emailAddress,
                                 // textAlign: TextAlign.center,
                                 style: new TextStyle(
                                   color: Colors.black,
@@ -367,116 +261,6 @@ class _SignupScreenState extends State<MySignupScreen> {
                                   hintStyle: TextStyle(color: Colors.grey),
                                 )),
                           ),
-                          Container(
-                            padding: EdgeInsets.all(10.0),
-                            child: TextField(
-                                controller: roadnoController,
-                                // keyboardType: TextInputType.number,
-                                style: new TextStyle(
-                                  color: Colors.black,
-                                ),
-                                decoration: InputDecoration(
-                                  prefixIcon: Icon(Icons.store_mall_directory,
-                                      color: Colors.grey),
-                                  border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.all(
-                                          Radius.circular(10.0)),
-                                      borderSide:
-                                          BorderSide(color: Colors.green)),
-                                  filled: true,
-                                  fillColor: Colors.white,
-                                  hintText: "Road Number",
-                                  hintStyle: TextStyle(color: Colors.grey),
-                                )),
-                          ),
-                          Container(
-                            padding: EdgeInsets.all(10.0),
-                            child: TextField(
-                                controller: housenoController,
-                                // textAlign: TextAlign.center,
-                                style: new TextStyle(
-                                  color: Colors.black,
-                                ),
-                                decoration: InputDecoration(
-                                  prefixIcon: Icon(Icons.my_location,
-                                      color: Colors.grey),
-                                  border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.all(
-                                          Radius.circular(10.0)),
-                                      borderSide:
-                                          BorderSide(color: Colors.green)),
-                                  filled: true,
-                                  fillColor: Colors.white,
-                                  hintText: "House Number",
-                                  hintStyle: TextStyle(color: Colors.grey),
-                                )),
-                          ),
-                          // Container(
-                          //   padding: EdgeInsets.all(10.0),
-                          //   child: TextField(
-                          //       controller: residController,
-                          //       // textAlign: TextAlign.center,
-                          //       style: new TextStyle(
-                          //         color: Colors.black,
-                          //       ),
-                          //       decoration: InputDecoration(
-                          //         prefixIcon: Icon(Icons.settings,
-                          //             color: Colors.grey),
-                          //         border: OutlineInputBorder(
-                          //             borderRadius: BorderRadius.all(
-                          //                 Radius.circular(10.0)),
-                          //             borderSide:
-                          //                 BorderSide(color: Colors.green)),
-                          //         filled: true,
-                          //         fillColor: Colors.white,
-                          //         hintText: "Resident ID",
-                          //         hintStyle: TextStyle(color: Colors.grey),
-                          //       )),
-                          // ),
-                          Container(
-                              padding: EdgeInsets.all(8.0),
-                              child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: <Widget>[
-                                    ButtonBar(
-                                      alignment: MainAxisAlignment.center,
-                                      children: <Widget>[
-                                        Radio(
-                                          value: 1,
-                                          groupValue: selectedRadio,
-                                          activeColor: Colors.deepPurple,
-                                          onChanged: (val) {
-                                            setSelectedRadio(val);
-                                          },
-                                        ),
-                                        Text('User',
-                                            style: GoogleFonts.roboto(
-                                              textStyle: Theme.of(context)
-                                                  .textTheme
-                                                  .display1,
-                                              fontSize: 16,
-                                            )),
-                                        Padding(
-                                          padding: new EdgeInsets.all(10.0),
-                                        ),
-                                        Radio(
-                                          value: 2,
-                                          groupValue: selectedRadio,
-                                          activeColor: Colors.deepPurple,
-                                          onChanged: (val) {
-                                            setSelectedRadio(val);
-                                          },
-                                        ),
-                                        Text('Admin',
-                                            style: GoogleFonts.roboto(
-                                              textStyle: Theme.of(context)
-                                                  .textTheme
-                                                  .display1,
-                                              fontSize: 16,
-                                            )),
-                                      ],
-                                    )
-                                  ]))
                         ],
                       ),
                     ),

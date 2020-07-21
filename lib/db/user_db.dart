@@ -19,7 +19,7 @@ class User {
   }
 
   static Future<List> addData(
-      String name, String address, String username, String password, String email, String level) async {
+      String name, String address, String username, String password, String email) async {
     var map = Map<String, dynamic>();
 
     map['action'] = ADD_USER_ACTION;
@@ -28,7 +28,7 @@ class User {
     map['username'] = username;
     map['password'] = password;
     map['email'] = email;
-    map['level'] = level;
+    map['level'] = 'user';
 
     final response = await http.post(ROOT, body: map);
     // print('user added Response: ${response.body}');

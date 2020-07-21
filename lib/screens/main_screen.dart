@@ -1,60 +1,103 @@
 import 'dart:convert';
 
-import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
-// import 'main.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../main.dart';
-import 'camera_screen.dart';
 import 'package:http/http.dart' as http;
-// import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 import 'resident_list_screen.dart';
 import 'vehicle_screen.dart';
 import 'login_screen.dart';
 import 'alarms_screen.dart';
+import 'live_stream.dart';
 
-// Future<NumVehicle> getData() async {
-//   final response =
-//       await http.get('http://lrgs.ftsm.ukm.my/users/a159159/report_daily.php');
-
-//   if (response.statusCode == 200) {
-//     // If the server did return a 200 OK response,
-//     // then parse the JSON.
-//     return NumVehicle.fromJson(json.decode(response.body));
-//   } else {
-//     // If the server did not return a 200 OK response,
-//     // then throw an exception.
-//     throw Exception('Failed to load album');
-//   }
-// }
-
-// class NumVehicle {
-//   final String type;
-//   final String flow;
-//   final int total;
-
-//   NumVehicle({this.type, this.flow, this.total});
-
-//   factory NumVehicle.fromJson(Map<String, dynamic> json) {
-//     return NumVehicle(
-//       type: json['vehicleType'],
-//       flow: json['vehicleFlow'],
-//       total: json['Total']
-//     );
-//   }
-// }
-String carin, carout, motorin, motorout;
+var carin,
+    carout,
+    motorin,
+    motorout,
+    busin,
+    busout,
+    totalcar,
+    totalbus,
+    totalmotor;
 
 class MainScreen extends StatefulWidget {
-  MainScreen({this.username});
-  final String username;
   @override
   _MyMainScreenState createState() => _MyMainScreenState();
 }
 
 class _MyMainScreenState extends State<MainScreen> {
   List<dynamic> numvehicle = List();
+  bool anomaly = false;
+
+  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
+  // var initializationSettingsAndroid;
+  // var initializationSettingsIOS;
+  // var initializationSettings;
+
+  @override
+  void initState() {
+    super.initState();
+    flutterLocalNotificationsPlugin = new FlutterLocalNotificationsPlugin();
+    var android = new AndroidInitializationSettings('@mipmap/logo_launcher3');
+    var iOS = new IOSInitializationSettings();
+    var initSetttings = new InitializationSettings(android, iOS);
+    flutterLocalNotificationsPlugin.initialize(initSetttings,
+        onSelectNotification: onSelectNotification);
+    setState(() {
+      checkAnomaly();
+    });
+  }
+
+  checkAnomaly() {
+    if (totalcar >= 1) {
+      showNotificationCar();
+    }
+    // if (totalbus > 4) {
+    //   showNotificationBus();
+    // }
+    else if (totalmotor >= 4) {
+      showNotificationMotor();
+    }
+  }
+
+  showNotificationCar() async {
+    var android = new AndroidNotificationDetails(
+        'channel id', 'channel NAME', 'CHANNEL DESCRIPTION',
+        priority: Priority.High, importance: Importance.Max);
+    var iOS = new IOSNotificationDetails();
+    var platform = new NotificationDetails(android, iOS);
+    await flutterLocalNotificationsPlugin.show(
+        0, 'EzCam3.0', 'The total record car exceeds 1 today!', platform,
+        payload: 'Nitish Kumar Singh is part time Youtuber');
+  }
+
+  showNotificationBus() async {
+    var android = new AndroidNotificationDetails(
+        'channel id', 'channel NAME', 'CHANNEL DESCRIPTION',
+        priority: Priority.High, importance: Importance.Max);
+    var iOS = new IOSNotificationDetails();
+    var platform = new NotificationDetails(android, iOS);
+    await flutterLocalNotificationsPlugin.show(
+        0, 'EzCam3.0', 'Emergency in Surada Residence!', platform,
+        payload: 'Nitish Kumar Singh is part time Youtuber');
+  }
+
+  showNotificationMotor() async {
+    var android = new AndroidNotificationDetails(
+        'channel id', 'channel NAME', 'CHANNEL DESCRIPTION',
+        priority: Priority.High, importance: Importance.Max);
+    var iOS = new IOSNotificationDetails();
+    var platform = new NotificationDetails(android, iOS);
+    await flutterLocalNotificationsPlugin.show(
+        0, 'EzCam3.0', 'The total record motor exceeds 4 today!', platform,
+        payload: 'Nitish Kumar Singh is part time Youtuber');
+  }
+
+  Future onSelectNotification(String payload) async {
+    await Navigator.push(
+        context, new MaterialPageRoute(builder: (context) => new MainScreen()));
+  }
 
   Future<List> getData() async {
     final response = await http
@@ -94,6 +137,12 @@ class _MyMainScreenState extends State<MainScreen> {
                 child: Center(
                     child: Image(image: AssetImage('assets/images/logo.png'))),
               ),
+              Center(
+                child: Text("Today's Record",
+                    style: GoogleFonts.montserrat(
+                        fontSize: 20, color: Colors.white)),
+              ),
+              SizedBox(height: 10),
               FutureBuilder(
                 future: getData(),
                 builder: (context, snapshot) {
@@ -103,60 +152,100 @@ class _MyMainScreenState extends State<MainScreen> {
                           itemCount: snapshot.data.length,
                           itemBuilder: (context, i) {
                             numvehicle = snapshot.data;
-                            if (numvehicle[i]['vehicleType'] == "CAR" &&
-                                numvehicle[i]['vehicleFlow'] == "IN") {
-                              carin = numvehicle[i]['Total'];
+                            if (numvehicle[i]['vehicleType'] == "CAR") {
+                              if (numvehicle[i]['vehicleFlow'] == "IN") {
+                                carin = numvehicle[i]['Total'];
+                              } else if (numvehicle[i]['vehicleFlow'] ==
+                                  "OUT") {
+                                carout = numvehicle[i]['Total'];
+                              }
+                              totalcar = int.parse(carin) - int.parse(carout);
                             }
-                            if (numvehicle[i]['vehicleType'] == "CAR" &&
-                                numvehicle[i]['vehicleFlow'] == "OUT") {
-                              carout = numvehicle[i]['Total'];
+                            if (numvehicle[i]['vehicleType'] == "BUS") {
+                              if (numvehicle[i]['vehicleFlow'] == "IN") {
+                                busin = numvehicle[i]['Total'] ?? 0;
+                              } else if (numvehicle[i]['vehicleFlow'] ==
+                                  "OUT") {
+                                busout = numvehicle[i]['Total'];
+                              }
+                              // totalbus = int.parse(busin) - int.parse(busout);
                             }
-                            if (numvehicle[i]['vehicleType'] == "MOTOR" &&
-                                numvehicle[i]['vehicleFlow'] == "IN") {
-                              motorin = numvehicle[i]['Total'];
-                            }
-                            if (numvehicle[i]['vehicleType'] == "MOTOR" &&
-                                numvehicle[i]['vehicleFlow'] == "OUT") {
-                              motorout = numvehicle[i]['Total'];
+                            if (numvehicle[i]['vehicleType'] == "MOTOR") {
+                              if (numvehicle[i]['vehicleFlow'] == "IN") {
+                                motorin = numvehicle[i]['Total'];
+                              } else if (numvehicle[i]['vehicleFlow'] ==
+                                  "OUT") {
+                                motorout = numvehicle[i]['Total'];
+                              }
+                              totalmotor =
+                                  int.parse(motorin) - int.parse(motorout);
                             }
                             return new Divider(
-                              height: 10.0,
-                              thickness: 10.0,
+                              height: 1.0,
                             );
                           },
                         )
                       : new Center(child: new CircularProgressIndicator());
                 },
               ),
-              Padding(
-                padding: EdgeInsets.only(left: 120),
-                child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Row(
-                    children: <Widget>[
-                      Text("Car In: " + carin ?? '0', textAlign: TextAlign.center,
-                          style: GoogleFonts.montserrat(color: Colors.white)),
-                      Icon(Icons.directions_car, color: Colors.white),
-                      SizedBox(width: 20),
-                      Text("Car Out: " + carout ?? '0',
-                          style: GoogleFonts.montserrat(color: Colors.white)),
-                      Icon(Icons.directions_transit, color: Colors.white),
-                    ],
-                  ),
-                  Row(
-                    children: <Widget>[
-                      Text("Motor In: " + motorin ?? '0',
-                          style: GoogleFonts.montserrat(color: Colors.white)),
-                      Icon(Icons.directions_car, color: Colors.white),
-                      SizedBox(width: 20),
-                      Text(motorout ?? '0',
-                          style: GoogleFonts.montserrat(color: Colors.white)),
-                      Icon(Icons.directions_transit, color: Colors.white),
-                    ],
-                  ),
-                ],
-              ),
+              GestureDetector(
+                onTap: () {
+                  // showNotification();
+                  // calculateVehicle();
+                  print(totalmotor.toString());
+                },
+                child: Container(
+                  height: 130,
+                  width: 180,
+                  alignment: FractionalOffset(0.5, 0.2),
+                  child: Card(
+                      color: Colors.deepPurpleAccent,
+                      child: Column(children: <Widget>[
+                        SizedBox(height: 20),
+                        Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Row(children: <Widget>[
+                                Icon(Icons.directions_car, color: Colors.white),
+                                Text("  In: " + (carin ?? "0"),
+                                    style: GoogleFonts.montserrat(
+                                        color: Colors.white, fontSize: 15)),
+                                Text(" Out: " + (carout ?? "0"),
+                                    style: GoogleFonts.montserrat(
+                                        color: Colors.white, fontSize: 15))
+                              ]),
+                            ]),
+                        SizedBox(height: 5),
+                        Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Row(children: <Widget>[
+                                Icon(Icons.directions_bus, color: Colors.white),
+                                Text("  In: " + (busin ?? "0"),
+                                    style: GoogleFonts.montserrat(
+                                        color: Colors.white, fontSize: 15)),
+                                Text(" Out: " + (busout ?? "0"),
+                                    style: GoogleFonts.montserrat(
+                                        color: Colors.white, fontSize: 15))
+                              ]),
+                            ]),
+                        SizedBox(height: 5),
+                        Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Row(children: <Widget>[
+                                Icon(Icons.directions_bike,
+                                    color: Colors.white),
+                                Text("  In: " + (motorin ?? "0"),
+                                    style: GoogleFonts.montserrat(
+                                        color: Colors.white, fontSize: 15)),
+                                Text(" Out: " + (motorout ?? "0"),
+                                    style: GoogleFonts.montserrat(
+                                        color: Colors.white, fontSize: 15))
+                              ]),
+                            ]),
+                      ])),
+                ),
               ),
               Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -173,7 +262,7 @@ class _MyMainScreenState extends State<MainScreen> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => CameraScreen()),
+                                builder: (context) => (LiveScreen())),
                           );
                         },
                         icon: Icon(Icons.camera),
@@ -184,9 +273,6 @@ class _MyMainScreenState extends State<MainScreen> {
                     ),
                   ),
                   Container(
-                    padding: EdgeInsets.only(
-                      top: 5,
-                    ),
                     height: 80,
                     width: double.maxFinite,
                     child: Card(
@@ -206,9 +292,6 @@ class _MyMainScreenState extends State<MainScreen> {
                     ),
                   ),
                   Container(
-                    padding: EdgeInsets.only(
-                      top: 5,
-                    ),
                     height: 80,
                     width: double.maxFinite,
                     child: Card(
@@ -228,9 +311,6 @@ class _MyMainScreenState extends State<MainScreen> {
                     ),
                   ),
                   Container(
-                    padding: EdgeInsets.only(
-                      top: 5,
-                    ),
                     height: 80,
                     width: double.maxFinite,
                     child: Card(
@@ -269,28 +349,28 @@ class _MyMainScreenState extends State<MainScreen> {
                   ),
                 ),
               ),
-              ListTile(
-                leading: Icon(Icons.perm_identity),
-                title: Text('Profile'),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => Profile()),
-                  );
-                  // Navigator.pop(context);
-                },
-              ),
-              ListTile(
-                leading: Icon(Icons.settings),
-                title: Text('Settings'),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => Settings()),
-                  );
-                  // Navigator.pop(context);
-                },
-              ),
+              // ListTile(
+              //   leading: Icon(Icons.perm_identity),
+              //   title: Text('Profile'),
+              //   onTap: () {
+              //     Navigator.push(
+              //       context,
+              //       MaterialPageRoute(builder: (context) => Profile()),
+              //     );
+              //     // Navigator.pop(context);
+              //   },
+              // ),
+              // ListTile(
+              //   leading: Icon(Icons.settings),
+              //   title: Text('Settings'),
+              //   onTap: () {
+              //     Navigator.push(
+              //       context,
+              //       MaterialPageRoute(builder: (context) => Settings()),
+              //     );
+              //     // Navigator.pop(context);
+              //   },
+              // ),
               ListTile(
                   leading: Icon(Icons.power_settings_new),
                   title: Text('Logout'),
@@ -308,33 +388,6 @@ class _MyMainScreenState extends State<MainScreen> {
             ],
           ),
         ),
-      ),
-    );
-  }
-}
-
-class Profile extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Profile Details'),
-      ),
-      body: Center(
-        child: Column(
-          children: <Widget>[],
-        ),
-      ),
-    );
-  }
-}
-
-class Settings extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Settings'),
       ),
     );
   }

@@ -1,16 +1,11 @@
 import 'package:flutter/material.dart';
-import 'dart:convert';
-import 'dart:async';
-import 'package:http/http.dart' as http;
+import 'package:fyp4/screens/add_residents.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:dio/dio.dart';
-// import 'vehicle_details_screen.dart';
 import 'details/resident_details_screen.dart';
 import 'login_screen.dart';
 import 'main_screen.dart';
 
 import '../db/resident_db.dart';
-import '../db/residents.dart';
 
 String residentid,
     name,
@@ -34,33 +29,18 @@ class ResidentScreenState extends State<ResidentScreen> {
   TextEditingController search = new TextEditingController();
   // List<dynamic> filteredResidents = List();
   List<dynamic> residents = List();
+  String filter;
 
-  Future<bool> _onBackPressed() {
-    return showDialog(
-          context: context,
-          builder: (context) => new AlertDialog(
-            title: new Text('Are you sure?'),
-            content: new Text('Do you want to exit an App'),
-            actions: <Widget>[
-              new GestureDetector(
-                onTap: () => Navigator.of(context).pop(false),
-                child: Text("NO"),
-              ),
-              SizedBox(height: 16),
-              new GestureDetector(
-                onTap: () => Navigator.of(context).pop(true),
-                child: Text("YES"),
-              ),
-            ],
-          ),
-        ) ??
-        false;
+  @override
+  void dispose() {
+    search.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: _onBackPressed,
+      onWillPop: () async => false,
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         theme: ThemeData(primarySwatch: Colors.purple),
@@ -107,11 +87,28 @@ class ResidentScreenState extends State<ResidentScreen> {
                             // filteredResidents = residents;
                           }),
                     ),
-                    onChanged: (value) {},
+                    onChanged: (value) {
+                      setState(() {
+                        filter = value;
+                      });
+                    },
                   ),
                 ),
               ),
             ),
+            actions: <Widget>[
+              new GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => MainScreen()),
+                  );
+                },
+                child: Center(
+                  child: Text("Back"),
+                ),
+              )
+            ],
           ),
           drawer: Drawer(
             child: Column(
@@ -127,28 +124,6 @@ class ResidentScreenState extends State<ResidentScreen> {
                       size: 96,
                     ),
                   ),
-                ),
-                ListTile(
-                  leading: Icon(Icons.perm_identity),
-                  title: Text('Profile'),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => Profile()),
-                    );
-                    // Navigator.pop(context);
-                  },
-                ),
-                ListTile(
-                  leading: Icon(Icons.settings),
-                  title: Text('Settings'),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => Settings()),
-                    );
-                    // Navigator.pop(context);
-                  },
                 ),
                 ListTile(
                     leading: Icon(Icons.power_settings_new),
@@ -189,22 +164,21 @@ class ResidentScreenState extends State<ResidentScreen> {
                             child: new GestureDetector(
                               onTap: () {
                                 residentid = residents[i]['ResidentId'];
-                                vid = residents[i]['VehicleId'];
-                                brand = residents[i]['VehicleBrand'];
-                                type = residents[i]['VehicleType'];
-                                regisdate = residents[i]['RegistrationDate'];
-                                pic = residents[i]['VehiclePicture'];
+                                // vid = residents[i]['VehicleId'];
+                                // brand = residents[i]['VehicleBrand'];
+                                // type = residents[i]['VehicleType'];
+                                // regisdate = residents[i]['RegistrationDate'];
+                                // pic = residents[i]['VehiclePicture'];
                                 name = residents[i]['Name'];
                                 roadno = residents[i]['RoadNo'];
                                 houseno = residents[i]['HouseNo'];
                                 contactno = residents[i]['ContactNo'];
 
-
                                 Navigator.of(context)
                                     .pushNamed('/ResidentDetailScreen');
                                 // Navigator.pushReplacementNamed(
                                 //     context, '/ResidentDetailScreen');
-                                Navigator.pop(context);
+                                // Navigator.pop(context);
                               },
                               child: new Card(
                                 color: Color(455561),
@@ -215,13 +189,17 @@ class ResidentScreenState extends State<ResidentScreen> {
                                     radius: 30.0,
                                     backgroundColor: Colors.purple,
                                   ),
-                                  title: new Text(residents[i]['Name'],
+                                  title: new Text(
+                                      residents[i]['Name'] ??
+                                          residents[i]['Name']
+                                              .contains(filter.toLowerCase()),
                                       style: GoogleFonts.montserrat(
                                           textStyle: TextStyle(
                                               color: Colors.white,
                                               fontSize: 17))),
                                   subtitle: new Text(
-                                    "House Number : ${residents[i]['HouseNo']}",
+                                    "House Number : ${residents[i]['HouseNo']}" ??
+                                        "House Number : ${residents[i]['HouseNo'].contains(filter.toLowerCase())}",
                                     style: GoogleFonts.montserrat(
                                         textStyle: TextStyle(
                                       color: Colors.white70,
@@ -248,23 +226,22 @@ class ResidentScreenState extends State<ResidentScreen> {
           ),
           floatingActionButton: FloatingActionButton(
             child: Icon(Icons.add),
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => AddResident()));
+            },
           ),
         ),
         routes: <String, WidgetBuilder>{
-        '/ResidentDetailScreen': (BuildContext context) => new ResidentDetails(
-            residentid: residentid,
-            vid: vid,
-            brand: brand,
-            type: type,
-            regisdate: regisdate,
-            name: name,
-            roadno: roadno,
-            houseno: houseno,
-            contactno: contactno),
-      },
+          '/ResidentDetailScreen': (BuildContext context) =>
+              new ResidentDetails(
+                  residentid: residentid,
+                  name: name,
+                  roadno: roadno,
+                  houseno: houseno,
+                  contactno: contactno),
+        },
       ),
-      
     );
   }
 }

@@ -1,11 +1,7 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'dart:convert';
-import 'dart:async';
-import 'package:http/http.dart' as http;
 
+import 'add_vehicles.dart';
 import 'login_screen.dart';
 import 'details/vehicle_details_screen.dart';
 import '../db/vehicle_db.dart';
@@ -54,6 +50,19 @@ class VehicleRecordScreenState extends State<VehicleRecordScreen> {
               ],
             ),
             title: Text('List of Registered Vehicle'),
+            actions: <Widget>[
+              new GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => MainScreen()),
+                  );
+                },
+                child: Center(
+                  child: Text("Back"),
+                ),
+              )
+            ],
           ),
           drawer: Drawer(
             child: Column(
@@ -70,28 +79,28 @@ class VehicleRecordScreenState extends State<VehicleRecordScreen> {
                     ),
                   ),
                 ),
-                ListTile(
-                  leading: Icon(Icons.perm_identity),
-                  title: Text('Profile'),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => Profile()),
-                    );
-                    // Navigator.pop(context);
-                  },
-                ),
-                ListTile(
-                  leading: Icon(Icons.settings),
-                  title: Text('Settings'),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => Settings()),
-                    );
-                    // Navigator.pop(context);
-                  },
-                ),
+                // ListTile(
+                //   leading: Icon(Icons.perm_identity),
+                //   title: Text('Profile'),
+                //   onTap: () {
+                //     Navigator.push(
+                //       context,
+                //       MaterialPageRoute(builder: (context) => Profile()),
+                //     );
+                //     // Navigator.pop(context);
+                //   },
+                // ),
+                // ListTile(
+                //   leading: Icon(Icons.settings),
+                //   title: Text('Settings'),
+                //   onTap: () {
+                //     Navigator.push(
+                //       context,
+                //       MaterialPageRoute(builder: (context) => Settings()),
+                //     );
+                //     // Navigator.pop(context);
+                //   },
+                // ),
                 ListTile(
                     leading: Icon(Icons.power_settings_new),
                     title: Text('Logout'),
@@ -161,7 +170,10 @@ class VehicleRecordScreenState extends State<VehicleRecordScreen> {
           ),
           floatingActionButton: FloatingActionButton(
             child: Icon(Icons.add),
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => AddVehicle()));
+            },
           ),
         ),
       ),
