@@ -131,7 +131,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                       borderRadius: BorderRadius.all(
                                           Radius.circular(10.0)),
                                       borderSide:
-                                          BorderSide(color: Colors.green)),
+                                          BorderSide(color: Colors.purple)),
                                   filled: true,
                                   fillColor: Colors.white,
                                   hintText: "Username",
@@ -154,7 +154,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                         borderRadius: BorderRadius.all(
                                             Radius.circular(10.0)),
                                         borderSide:
-                                            BorderSide(color: Colors.green)),
+                                            BorderSide(color: Colors.purple)),
                                     filled: true,
                                     fillColor: Colors.white,
                                     hintText: "Password",

@@ -110,218 +110,225 @@ class _MyAddVehicleState extends State<AddVehicle> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      resizeToAvoidBottomPadding: false,
-      appBar: new AppBar(
-          title: new Text("Add Vehicle"), backgroundColor: Colors.purple),
-      backgroundColor: Color(0xff21254A),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
-          Padding(
-            padding: EdgeInsets.only(
-              top: 50,
-              bottom: 30,
+    return WillPopScope(
+      onWillPop: () async {
+        return true;
+      },
+      child: Scaffold(
+        resizeToAvoidBottomPadding: false,
+        appBar: new AppBar(
+            title: new Text("Add Vehicle"), backgroundColor: Colors.purple),
+        backgroundColor: Color(0xff21254A),
+        body: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            Padding(
+              padding: EdgeInsets.only(
+                top: 50,
+                bottom: 30,
+              ),
+              child: Center(
+                child: Text("Please fill in the forms",
+                    style: GoogleFonts.montserrat(color: Colors.white)),
+              ),
             ),
-            child: Center(
-              child: Text("Please fill in the forms",
-                  style: GoogleFonts.montserrat(color: Colors.white)),
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20.0),
-            child: Column(
-              children: <Widget>[
-                DropdownButton(
-                  hint: Text("Select Owner Name",
-                      style: GoogleFonts.montserrat(
-                          fontSize: 16, color: Colors.white30)),
-                  items: name.map((item) {
-                    return new DropdownMenuItem(
-                      child: Row(
-                        children: <Widget>[
-                          Icon(Icons.person),
-                          Text(item['Name'],
-                              style:
-                                  GoogleFonts.montserrat(color: Colors.black))
-                        ],
-                      ),
-                      value: item['ResidentId'],
-                    );
-                  }).toList(),
-                  onChanged: (newVal) {
-                    setState(() {
-                      residentid = newVal;
-                    });
-                  },
-                  value: residentid,
-                ),
-                Container(
-                  padding: EdgeInsets.all(10.0),
-                  child: TextField(
-                      controller: plate,
-                      // textAlign: TextAlign.center,
-                      style: new TextStyle(
-                        color: Colors.black,
-                      ),
-                      decoration: InputDecoration(
-                        prefixIcon: Icon(Icons.person, color: Colors.grey),
-                        border: OutlineInputBorder(
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(10.0)),
-                            borderSide: BorderSide(color: Colors.green)),
-                        filled: true,
-                        fillColor: Colors.white,
-                        hintText: "Number Plate",
-                        hintStyle: TextStyle(color: Colors.grey),
-                      )),
-                ),
-                Container(
-                  padding: EdgeInsets.all(10.0),
-                  child: TextField(
-                      controller: type,
-                      // textAlign: TextAlign.center,
-                      style: new TextStyle(
-                        color: Colors.black,
-                      ),
-                      decoration: InputDecoration(
-                        prefixIcon:
-                            Icon(Icons.directions_car, color: Colors.grey),
-                        border: OutlineInputBorder(
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(10.0)),
-                            borderSide: BorderSide(color: Colors.green)),
-                        filled: true,
-                        fillColor: Colors.white,
-                        hintText: "Vehicle Name",
-                        hintStyle: TextStyle(color: Colors.grey),
-                      )),
-                ),
-                SizedBox(height: 20),
-                Column(
-                  children: <Widget>[
-                    SizedBox(width: 15),
-                    Text(_dateTime == null ? 'Please select date' : pickeddate,
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20.0),
+              child: Column(
+                children: <Widget>[
+                  DropdownButton(
+                    hint: Text("Select Owner Name",
                         style: GoogleFonts.montserrat(
-                            color: Colors.white, fontSize: 16)),
-                    SizedBox(height: 20),
-                    ButtonTheme(
-                      minWidth: 370.0,
-                      height: 50,
-                      child: RaisedButton.icon(
-                          onPressed: () {
-                            showDatePicker(
-                                    context: context,
-                                    initialDate: DateTime.now(),
-                                    firstDate: DateTime(2001),
-                                    lastDate: DateTime(2021))
-                                .then((date) {
-                              setState(() {
-                                _dateTime = date;
-                                pickeddate =
-                                    _dateTime.toString().substring(0, 10);
+                            fontSize: 16, color: Colors.white30)),
+                    items: name.map((item) {
+                      return new DropdownMenuItem(
+                        child: Row(
+                          children: <Widget>[
+                            Icon(Icons.person),
+                            Text(item['Name'],
+                                style:
+                                    GoogleFonts.montserrat(color: Colors.black))
+                          ],
+                        ),
+                        value: item['ResidentId'],
+                      );
+                    }).toList(),
+                    onChanged: (newVal) {
+                      setState(() {
+                        residentid = newVal;
+                      });
+                    },
+                    value: residentid,
+                  ),
+                  Container(
+                    padding: EdgeInsets.all(10.0),
+                    child: TextField(
+                        controller: plate,
+                        // textAlign: TextAlign.center,
+                        style: new TextStyle(
+                          color: Colors.black,
+                        ),
+                        decoration: InputDecoration(
+                          prefixIcon: Icon(Icons.person, color: Colors.grey),
+                          border: OutlineInputBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(10.0)),
+                              borderSide: BorderSide(color: Colors.green)),
+                          filled: true,
+                          fillColor: Colors.white,
+                          hintText: "Number Plate",
+                          hintStyle: TextStyle(color: Colors.grey),
+                        )),
+                  ),
+                  Container(
+                    padding: EdgeInsets.all(10.0),
+                    child: TextField(
+                        controller: type,
+                        // textAlign: TextAlign.center,
+                        style: new TextStyle(
+                          color: Colors.black,
+                        ),
+                        decoration: InputDecoration(
+                          prefixIcon:
+                              Icon(Icons.directions_car, color: Colors.grey),
+                          border: OutlineInputBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(10.0)),
+                              borderSide: BorderSide(color: Colors.green)),
+                          filled: true,
+                          fillColor: Colors.white,
+                          hintText: "Vehicle Name",
+                          hintStyle: TextStyle(color: Colors.grey),
+                        )),
+                  ),
+                  SizedBox(height: 20),
+                  Column(
+                    children: <Widget>[
+                      SizedBox(width: 15),
+                      Text(
+                          _dateTime == null ? 'Please select date' : pickeddate,
+                          style: GoogleFonts.montserrat(
+                              color: Colors.white, fontSize: 16)),
+                      SizedBox(height: 20),
+                      ButtonTheme(
+                        minWidth: 370.0,
+                        height: 50,
+                        child: RaisedButton.icon(
+                            onPressed: () {
+                              showDatePicker(
+                                      context: context,
+                                      initialDate: DateTime.now(),
+                                      firstDate: DateTime(2001),
+                                      lastDate: DateTime(2021))
+                                  .then((date) {
+                                setState(() {
+                                  _dateTime = date;
+                                  pickeddate =
+                                      _dateTime.toString().substring(0, 10);
+                                });
                               });
-                            });
-                          },
-                          color: Colors.purple,
-                          icon: Icon(Icons.calendar_today, color: Colors.white),
-                          label: Text('Select date',
-                              style: GoogleFonts.montserrat(
-                                  color: Colors.white, fontSize: 16))),
-                    )
-                  ],
-                ),
-                Container(
-                    padding: EdgeInsets.all(8.0),
-                    child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: <Widget>[
-                          ButtonBar(
-                            alignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              Radio(
-                                value: 1,
-                                groupValue: selectedRadio,
-                                activeColor: Colors.deepPurple,
-                                onChanged: (val) {
-                                  setSelectedRadio(val);
-                                },
-                              ),
-                              Text('Car',
-                                  style: GoogleFonts.montserrat(
-                                    color: Colors.white,
-                                    fontSize: 16,
-                                  )),
-                              Padding(
-                                padding: new EdgeInsets.all(10.0),
-                              ),
-                              Radio(
-                                value: 2,
-                                groupValue: selectedRadio,
-                                activeColor: Colors.deepPurple,
-                                onChanged: (val) {
-                                  setSelectedRadio(val);
-                                },
-                              ),
-                              Text('Motorcycle',
-                                  style: GoogleFonts.montserrat(
-                                    color: Colors.white,
-                                    fontSize: 16,
-                                  )),
-                              Radio(
-                                value: 3,
-                                groupValue: selectedRadio,
-                                activeColor: Colors.deepPurple,
-                                onChanged: (val) {
-                                  setSelectedRadio(val);
-                                },
-                              ),
-                              Text('Lorr',
-                                  style: GoogleFonts.montserrat(
-                                    color: Colors.white,
-                                    fontSize: 16,
-                                  )),
-                            ],
-                          )
-                        ])),
-                SizedBox(height: 10.0),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    ButtonTheme(
-                      minWidth: 175.0,
-                      height: 50.0,
-                      child: RaisedButton(
-                          color: Colors.purple,
-                          onPressed: () {
-                            checkEmpty();
-                          },
-                          child: Text('Add',
-                              style: GoogleFonts.montserrat(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white))),
-                    ),
-                    SizedBox(width: 18),
-                    ButtonTheme(
-                        minWidth: 175,
+                            },
+                            color: Colors.purple,
+                            icon:
+                                Icon(Icons.calendar_today, color: Colors.white),
+                            label: Text('Select date',
+                                style: GoogleFonts.montserrat(
+                                    color: Colors.white, fontSize: 16))),
+                      )
+                    ],
+                  ),
+                  Container(
+                      padding: EdgeInsets.all(8.0),
+                      child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: <Widget>[
+                            ButtonBar(
+                              alignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                Radio(
+                                  value: 1,
+                                  groupValue: selectedRadio,
+                                  activeColor: Colors.deepPurple,
+                                  onChanged: (val) {
+                                    setSelectedRadio(val);
+                                  },
+                                ),
+                                Text('Car',
+                                    style: GoogleFonts.montserrat(
+                                      color: Colors.white,
+                                      fontSize: 16,
+                                    )),
+                                Padding(
+                                  padding: new EdgeInsets.all(10.0),
+                                ),
+                                Radio(
+                                  value: 2,
+                                  groupValue: selectedRadio,
+                                  activeColor: Colors.deepPurple,
+                                  onChanged: (val) {
+                                    setSelectedRadio(val);
+                                  },
+                                ),
+                                Text('Motorcycle',
+                                    style: GoogleFonts.montserrat(
+                                      color: Colors.white,
+                                      fontSize: 16,
+                                    )),
+                                Radio(
+                                  value: 3,
+                                  groupValue: selectedRadio,
+                                  activeColor: Colors.deepPurple,
+                                  onChanged: (val) {
+                                    setSelectedRadio(val);
+                                  },
+                                ),
+                                Text('Lorr',
+                                    style: GoogleFonts.montserrat(
+                                      color: Colors.white,
+                                      fontSize: 16,
+                                    )),
+                              ],
+                            )
+                          ])),
+                  SizedBox(height: 10.0),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      ButtonTheme(
+                        minWidth: 175.0,
                         height: 50.0,
                         child: RaisedButton(
-                            color: Colors.deepPurpleAccent,
+                            color: Colors.purple,
                             onPressed: () {
-                              clearValues();
+                              checkEmpty();
                             },
-                            child: Text('Reset',
+                            child: Text('Add',
                                 style: GoogleFonts.montserrat(
                                     fontSize: 16,
                                     fontWeight: FontWeight.bold,
-                                    color: Colors.white))))
-                  ],
-                )
-              ],
+                                    color: Colors.white))),
+                      ),
+                      SizedBox(width: 18),
+                      ButtonTheme(
+                          minWidth: 175,
+                          height: 50.0,
+                          child: RaisedButton(
+                              color: Colors.deepPurpleAccent,
+                              onPressed: () {
+                                clearValues();
+                              },
+                              child: Text('Reset',
+                                  style: GoogleFonts.montserrat(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white))))
+                    ],
+                  )
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

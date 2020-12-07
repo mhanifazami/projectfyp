@@ -28,21 +28,24 @@ class CheckScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text("Check Registration of " + noplate),
       ),
-      body: Center(
-        child: FutureBuilder<List>(
-          future: Vehicle.viewData(),
-          builder: (context, snapshot) {
-            if (snapshot.hasError) print(snapshot.error);
-            return snapshot.hasData
-                ? new ItemList(
-                    list: snapshot.data
-                        .where((list) => list['VehicleId'].contains(noplate))
-                        .toList(),
-                  )
-                : new Center(
-                    child: Text("not matched!"),
-                  );
-          },
+      body: SafeArea(
+        child: Center(
+          child: FutureBuilder<List>(
+            future: Vehicle.viewData(),
+            builder: (context, snapshot) {
+              if (snapshot.hasError) print(snapshot.error);
+              return snapshot.hasData
+                  ? new ItemList(
+                      list: snapshot.data
+                          .where((list) =>
+                              list['VehicleId'].toLowerCase().contains(noplate))
+                          .toList(),
+                    )
+                  : new Center(
+                      child: Text("not matched!"),
+                    );
+            },
+          ),
         ),
       ),
     );

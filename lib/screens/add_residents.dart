@@ -64,7 +64,11 @@ class _MyAddResidentState extends State<AddResident> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return WillPopScope(
+      onWillPop: () async {
+        return true;
+      },
+      child: Scaffold(
       resizeToAvoidBottomPadding: false,
       appBar: new AppBar(
           title: new Text("Add Resident"), backgroundColor: Colors.purple),
@@ -205,6 +209,7 @@ class _MyAddResidentState extends State<AddResident> {
           ),
         ],
       ),
+    )
     );
   }
 }

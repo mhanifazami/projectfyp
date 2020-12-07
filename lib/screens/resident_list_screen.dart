@@ -28,8 +28,18 @@ class ResidentScreen extends StatefulWidget {
 class ResidentScreenState extends State<ResidentScreen> {
   TextEditingController search = new TextEditingController();
   // List<dynamic> filteredResidents = List();
-  List<dynamic> residents = List();
+  List<dynamic> residents = List<dynamic>();
+  List<dynamic> filteredResident = List<dynamic>();
   String filter;
+
+  @override
+  void initState() {
+    // setState(() {
+    //   filteredResident = residents;
+    // });
+    filteredResident = residents;
+    super.initState();
+  }
 
   @override
   void dispose() {
@@ -40,7 +50,9 @@ class ResidentScreenState extends State<ResidentScreen> {
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: () async => false,
+      onWillPop: () async {
+        return true;
+      },
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         theme: ThemeData(primarySwatch: Colors.purple),
@@ -80,35 +92,25 @@ class ResidentScreenState extends State<ResidentScreen> {
                       fillColor: Color(0xff21254A),
                       hintText: "Search by name...",
                       hintStyle: TextStyle(color: Colors.white54),
-                      suffixIcon: IconButton(
-                          icon: Icon(Icons.close),
-                          onPressed: () {
-                            search.clear();
-                            // filteredResidents = residents;
-                          }),
                     ),
-                    onChanged: (value) {
+                    onChanged: (text) {
+                      if (text.isEmpty) {
+                        setState(() {
+                          filteredResident = residents;
+                        });
+                      }
+                      text = text.toLowerCase();
                       setState(() {
-                        filter = value;
+                        filteredResident = residents.where((element) {
+                          var residentName = element['Name'].toLowerCase();
+                          return residentName.contains(text);
+                        }).toList();
                       });
                     },
                   ),
                 ),
               ),
             ),
-            actions: <Widget>[
-              new GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => MainScreen()),
-                  );
-                },
-                child: Center(
-                  child: Text("Back"),
-                ),
-              )
-            ],
           ),
           drawer: Drawer(
             child: Column(
@@ -146,33 +148,29 @@ class ResidentScreenState extends State<ResidentScreen> {
             child: FutureBuilder<List>(
               future: Resident.viewData(),
               builder: (context, snapshot) {
+                residents = snapshot.data;
                 if (snapshot.hasError) print(snapshot.error);
                 return snapshot.hasData
                     ? new ListView.builder(
-                        // residents = snapshot.data,
-                        // residents = list;
-                        itemCount: snapshot.data.length,
-                        // snapshot.data == null ? 0 :
-                        // snapshot.data.length,
+                        // itemCount: snapshot.data.length,
+                        itemCount: filteredResident == null
+                            ? 0
+                            : filteredResident.length,
                         itemBuilder: (context, i) {
-                          // final list = snapshot.data;
-                          residents = snapshot.data;
-                          // filtername = residents[i]['Name'];
-
                           return new Container(
                             padding: const EdgeInsets.all(0.1),
                             child: new GestureDetector(
                               onTap: () {
-                                residentid = residents[i]['ResidentId'];
+                                residentid = filteredResident[i]['ResidentId'];
                                 // vid = residents[i]['VehicleId'];
                                 // brand = residents[i]['VehicleBrand'];
                                 // type = residents[i]['VehicleType'];
                                 // regisdate = residents[i]['RegistrationDate'];
                                 // pic = residents[i]['VehiclePicture'];
-                                name = residents[i]['Name'];
-                                roadno = residents[i]['RoadNo'];
-                                houseno = residents[i]['HouseNo'];
-                                contactno = residents[i]['ContactNo'];
+                                name = filteredResident[i]['Name'];
+                                roadno = filteredResident[i]['RoadNo'];
+                                houseno = filteredResident[i]['HouseNo'];
+                                contactno = filteredResident[i]['ContactNo'];
 
                                 Navigator.of(context)
                                     .pushNamed('/ResidentDetailScreen');
@@ -190,16 +188,16 @@ class ResidentScreenState extends State<ResidentScreen> {
                                     backgroundColor: Colors.purple,
                                   ),
                                   title: new Text(
-                                      residents[i]['Name'] ??
-                                          residents[i]['Name']
+                                      filteredResident[i]['Name'] ??
+                                          filteredResident[i]['Name']
                                               .contains(filter.toLowerCase()),
                                       style: GoogleFonts.montserrat(
                                           textStyle: TextStyle(
                                               color: Colors.white,
                                               fontSize: 17))),
                                   subtitle: new Text(
-                                    "House Number : ${residents[i]['HouseNo']}" ??
-                                        "House Number : ${residents[i]['HouseNo'].contains(filter.toLowerCase())}",
+                                    "House Number : ${filteredResident[i]['HouseNo']}" ??
+                                        "House Number : ${filteredResident[i]['HouseNo'].contains(filter.toLowerCase())}",
                                     style: GoogleFonts.montserrat(
                                         textStyle: TextStyle(
                                       color: Colors.white70,
